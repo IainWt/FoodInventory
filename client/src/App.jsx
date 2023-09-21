@@ -10,6 +10,20 @@ export default function App() {
     return JSON.parse(localValue)
   })
 
+  const [unopened, setUnopened] = useState([{}])
+
+  useEffect(() => {
+    fetch("http://localhost:5000/food/unopened").then(
+      response => response.json()
+    )
+    .then(
+      data => console.log(data)
+    )
+    .catch(
+      err => console.log(err)
+    )
+  }, [])
+
   useEffect(() => {
     localStorage.setItem("ITEMS", JSON.stringify(todos))
   }, [todos])

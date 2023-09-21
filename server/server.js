@@ -3,17 +3,22 @@ require("dotenv").config()
 const express = require("express")
 const mongoose = require("mongoose")
 const cors = require("cors")
-const Food = require("./Food")
+const Food = require("./models/Food")
 
 const app = express()
-app.use(cors)
-app.use(express.json)
+app.use(cors())
+app.use(express.json())
+
+const foodRouter = require("./routes/food")
+app.use("/food", foodRouter)
 
 mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true })
 const db = mongoose.connection
 db.on("error", error => console.error(error))
 db.once("open", () => console.log("Connected to database"))
 
+ 
+// FOR FRONTEND
 async function addFood(foodData) {
   const newFood = Food.create({foodData})
   console.log(newFood)
