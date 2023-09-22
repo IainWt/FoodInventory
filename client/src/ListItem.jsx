@@ -7,7 +7,7 @@ export function ListItem({ _id, item, expiryDate, toggleTodo, deleteTodo }) {
         <input type="checkbox" onChange={e => toggleTodo(_id, e.target.checked)} />
         {item}
       </label>
-      <button onClick={() => deleteTodo(_id)} className="btn btn-danger">Delete</button>
+      <button onClick={() => deleteTodo(item)} className="btn btn-danger">Delete</button>
     </li>
   )
   

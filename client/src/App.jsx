@@ -31,9 +31,9 @@ export default function App() {
     )
   }, [])
 
-  useEffect(() => {
-    localStorage.setItem("ITEMS", JSON.stringify(todos))
-  }, [todos])
+  // useEffect(() => {
+  //   localStorage.setItem("ITEMS", JSON.stringify(todos))
+  // }, [todos])
 
   function addUnopenedFood(item) {
     fetch("http://localhost:5000/food/unopened", {
@@ -47,6 +47,19 @@ export default function App() {
     })
     .then(response => response.json())
     .then(data => setUnopened(currentUnopened => [...currentUnopened, data]))
+  }
+
+  function removeUnopenedFood(item) {
+    fetch(`http://localhost:5000/food/unopened/${item}`, {
+      method: 'DELETE',
+    })
+      .then(response => response.json())
+      .then(response => {
+        setUnopened(currentUnopened => {
+          return currentUnopened.filter(item => item._id != response._id)
+        })
+      })
+      .catch(err => console.log(err))
   }
 
   // function addTodo(title) {
@@ -70,7 +83,7 @@ export default function App() {
     })
   }
 
-  
+
 
   function deleteTodo(id) {
     setTodos(currentTodos => {
@@ -85,7 +98,7 @@ export default function App() {
   return (
     <>
       {console.log("app todos", unopened)}
-      <FormAndList addItem={addUnopenedFood} todos={unopened} toggleTodo={toggleTodo} deleteTodo={deleteTodo} />
+      <FormAndList addItem={addUnopenedFood} todos={unopened} toggleTodo={toggleTodo} deleteTodo={removeUnopenedFood} />
       {/* <FormAndList addTodo={addTodo} todos={todos} toggleTodo={toggleTodo} deleteTodo={deleteTodo} /> */}
     </>
   )
