@@ -1,13 +1,13 @@
 import { ListItem } from "./ListItem"
 
-export function FoodList({ todos, toggleTodo, deleteTodo }) {
-  console.log("foodlist todos:", todos)
+export function FoodList({ items, removeFood }) {
+  console.log("foodlist foods:", items)
   return (
     <ul className="list">
-      {/* {todos.length === 0 && "No Todos"} */}
-      {todos.map(todo => {
+      {items.length === 0 && "No Items"}
+      {items.map(item => {
         return (
-          <ListItem {...todo} key={todo._id} toggleTodo={toggleTodo} deleteTodo={deleteTodo} />
+          <ListItem {...item} key={item._id} removeFood={removeFood} />
         )
       })}
     </ul>

@@ -71,25 +71,25 @@ export default function App() {
   //   })
   // }
 
-  function toggleTodo(id, completed) {
-    setTodos(currentTodos => {
-      return currentTodos.map(todo => {
-        if (todo.id === id) {
-          return { ...todo, completed }
-        }
+  // function toggleTodo(id, completed) {
+  //   setTodos(currentTodos => {
+  //     return currentTodos.map(todo => {
+  //       if (todo.id === id) {
+  //         return { ...todo, completed }
+  //       }
 
-        return todo
-      })
-    })
-  }
+  //       return todo
+  //     })
+  //   })
+  // }
 
 
 
-  function deleteTodo(id) {
-    setTodos(currentTodos => {
-      return currentTodos.filter(todo => todo.id !== id)
-    })
-  }
+  // function deleteTodo(id) {
+  //   setTodos(currentTodos => {
+  //     return currentTodos.filter(todo => todo.id !== id)
+  //   })
+  // }
 
   if (loading) {
     return <div>Loading...</div>;
@@ -98,7 +98,7 @@ export default function App() {
   return (
     <>
       {console.log("app todos", unopened)}
-      <FormAndList addItem={addUnopenedFood} todos={unopened} toggleTodo={toggleTodo} deleteTodo={removeUnopenedFood} />
+      <FormAndList addItem={addUnopenedFood} items={unopened} removeFood={removeUnopenedFood} />
       {/* <FormAndList addTodo={addTodo} todos={todos} toggleTodo={toggleTodo} deleteTodo={deleteTodo} /> */}
     </>
   )

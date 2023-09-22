@@ -1,13 +1,11 @@
-export function ListItem({ _id, item, expiryDate, toggleTodo, deleteTodo }) {
+export function ListItem({ _id, item, expiryDate, removeFood }) {
   return (
     <li>
       {console.log("listitem id:", _id)}
       {console.log("listitem item:", item)}
-      <label>
-        <input type="checkbox" onChange={e => toggleTodo(_id, e.target.checked)} />
-        {item}
-      </label>
-      <button onClick={() => deleteTodo(item)} className="btn btn-danger">Delete</button>
+      <button onClick={() => removeFood(item)} className="btn btn-danger">Delete</button>
+      {/* <input type="checkbox" onChange={e => toggleTodo(_id, e.target.checked)} /> */}
+      {item}
     </li>
   )
   
