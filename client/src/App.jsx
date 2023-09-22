@@ -47,23 +47,16 @@ export default function App() {
     })
     .then(response => response.json())
     .then(data => setUnopened(currentUnopened => [...currentUnopened, data]))
-
-    // setUnopened(currentUnopened => {
-    //   return [
-    //     ...currentUnopened,
-    //     { id: crypto.randomUUID(), expiryDate: Date.now(), open: false }
-    //   ]
-    // })
   }
 
-  function addTodo(title) {
-    setTodos(currentTodos => {
-      return [
-        ...currentTodos,
-        { id: crypto.randomUUID(), title, completed: false },
-      ]
-    })
-  }
+  // function addTodo(title) {
+  //   setTodos(currentTodos => {
+  //     return [
+  //       ...currentTodos,
+  //       { id: crypto.randomUUID(), title, completed: false },
+  //     ]
+  //   })
+  // }
 
   function toggleTodo(id, completed) {
     setTodos(currentTodos => {
@@ -76,6 +69,8 @@ export default function App() {
       })
     })
   }
+
+  
 
   function deleteTodo(id) {
     setTodos(currentTodos => {

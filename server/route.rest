@@ -9,3 +9,7 @@ Content-Type: application/json
 {
   "item": "pesto"
 }
+
+###
+
+DELETE http://localhost:5000/food/unopened/pesto

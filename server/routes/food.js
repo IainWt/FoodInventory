@@ -29,7 +29,20 @@ router.post("/unopened", async (req, res) => {
 
 // Add new opened
 // Delete one unopened
-// Delete one unopened
+router.delete("/unopened/:item", async (req, res) => {
+  try {
+    const response = await Food.deleteOne({ item: req.params.item })
+    if (response.deletedCount === 0) {
+      res.json({ message: `No ${req.params.item} to remove` })
+    } else {
+      res.json({ message: `${req.params.item} removed` })
+    }
+  } catch (err) {
+    res.status(400).json({ message: err.message })
+  }
+})
+
+// Delete one opened
 
 
 
