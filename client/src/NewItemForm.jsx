@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-export function NewItemForm({ addTodo }) {
+export function NewItemForm({ addItem }) {
 
   const [newItem, setNewItem] = useState('')
 
@@ -8,7 +8,7 @@ export function NewItemForm({ addTodo }) {
     e.preventDefault()
     if (newItem === '') return
 
-    addTodo(newItem)
+    addItem(newItem)
 
     setNewItem("")
   }

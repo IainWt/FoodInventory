@@ -14,6 +14,19 @@ router.get("/unopened", async (req, res) => {
 
 // Get all opened
 // Add new unopened
+router.post("/unopened", async (req, res) => {
+  const food = new Food({
+    item: req.body.item,
+    expiryDate: Date.now() // TODO change to given date
+  })
+  try {
+    const newFood = await food.save()
+    res.status(201).json(newFood)
+  } catch (err) {
+    res.status(400).json({ message: err.message })
+  }
+})
+
 // Add new opened
 // Delete one unopened
 // Delete one unopened

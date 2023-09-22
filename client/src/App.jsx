@@ -11,22 +11,50 @@ export default function App() {
   })
 
   const [unopened, setUnopened] = useState([{}])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     fetch("http://localhost:5000/food/unopened").then(
       response => response.json()
     )
     .then(
-      data => console.log(data)
+      data => {
+        setUnopened(data)
+        setLoading(false)
+      }
     )
     .catch(
-      err => console.log(err)
+      err => {
+        console.log(err)
+        setLoading(false)
+      }
     )
   }, [])
 
   useEffect(() => {
     localStorage.setItem("ITEMS", JSON.stringify(todos))
   }, [todos])
+
+  function addUnopenedFood(item) {
+    fetch("http://localhost:5000/food/unopened", {
+      method: 'POST',
+      body: JSON.stringify({
+        item,
+        expiryDate: Date.now(),
+        open: false
+      }),
+      headers: {'Content-type': 'application/json; charset=UTF-8'},
+    })
+    .then(response => response.json())
+    .then(data => setUnopened(currentUnopened => [...currentUnopened, data]))
+
+    // setUnopened(currentUnopened => {
+    //   return [
+    //     ...currentUnopened,
+    //     { id: crypto.randomUUID(), expiryDate: Date.now(), open: false }
+    //   ]
+    // })
+  }
 
   function addTodo(title) {
     setTodos(currentTodos => {
@@ -55,10 +83,15 @@ export default function App() {
     })
   }
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <>
-      <FormAndList addTodo={addTodo} todos={todos} toggleTodo={toggleTodo} deleteTodo={deleteTodo} />
-      <FormAndList addTodo={addTodo} todos={todos} toggleTodo={toggleTodo} deleteTodo={deleteTodo} />
+      {console.log("app todos", unopened)}
+      <FormAndList addItem={addUnopenedFood} todos={unopened} toggleTodo={toggleTodo} deleteTodo={deleteTodo} />
+      {/* <FormAndList addTodo={addTodo} todos={todos} toggleTodo={toggleTodo} deleteTodo={deleteTodo} /> */}
     </>
   )
 }

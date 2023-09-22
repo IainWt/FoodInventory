@@ -1,0 +1,11 @@
+
+GET http://localhost:5000/food/unopened
+
+###
+
+POST http://localhost:5000/food/unopened
+Content-Type: application/json
+
+{
+  "item": "pesto"
+}
