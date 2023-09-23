@@ -68,6 +68,23 @@ body {
   margin-bottom: 0.5rem;
 }
 
+
+/* Table styles */
+
+.food-table {
+  width: 100%;
+}
+
+.food-table th,
+.food-table tr {
+  border: none;
+  padding: 8px;
+  text-align: left;
+}
+
+
+/* List styles */
+
 .list {
   margin: 0;
   padding: 0;
