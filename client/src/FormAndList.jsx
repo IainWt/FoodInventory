@@ -7,7 +7,6 @@ export function FormAndList({ addItem, items, removeFood }) {
     <>
       <NewItemForm addItem={addItem} />
       <h1 className="header">Food List</h1>
-      {console.log("form and list foods:", items)}
       <FoodList items={items} removeFood={removeFood} />
     </>
   )

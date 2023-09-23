@@ -96,7 +96,6 @@ export default function App() {
 
   return (
     <>
-      {console.log("app todos", unopened)}
       <FormAndList addItem={addUnopenedFood} items={unopened} removeFood={removeUnopenedFood} />
       {/* <FormAndList addTodo={addTodo} todos={todos} toggleTodo={toggleTodo} deleteTodo={deleteTodo} /> */}
     </>

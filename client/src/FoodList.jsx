@@ -1,7 +1,6 @@
 import { ListItem } from "./ListItem"
 
 export function FoodList({ items, removeFood }) {
-  console.log("foodlist foods:", items)
   return (
     <table className="food-table">
       {items.length === 0 && "No Items"}
