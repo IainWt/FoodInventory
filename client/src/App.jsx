@@ -84,7 +84,6 @@ export default function App() {
   // }
 
 
-
   // function deleteTodo(id) {
   //   setTodos(currentTodos => {
   //     return currentTodos.filter(todo => todo.id !== id)
