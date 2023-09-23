@@ -12,6 +12,7 @@ export function NewItemForm({ addItem }) {
     addItem(newItem, expiryDate)
 
     setNewItem("")
+    setExpiryDate("")
   }
 
   return (
