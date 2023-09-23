@@ -6,6 +6,7 @@ export function ListItem({ _id, item, expiryDate, removeFood }) {
       <button onClick={() => removeFood(item)} className="btn btn-danger">Delete</button>
       {/* <input type="checkbox" onChange={e => toggleTodo(_id, e.target.checked)} /> */}
       {item}
+      <p>{Date.now()}</p>
     </li>
   )
   

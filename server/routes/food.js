@@ -17,7 +17,7 @@ router.get("/unopened", async (req, res) => {
 router.post("/unopened", async (req, res) => {
   const food = new Food({
     item: req.body.item,
-    expiryDate: Date.now() // TODO change to given date
+    expiryDate: req.body.expiryDate
   })
   try {
     const newFood = await food.save()

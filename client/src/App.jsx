@@ -35,12 +35,12 @@ export default function App() {
   //   localStorage.setItem("ITEMS", JSON.stringify(todos))
   // }, [todos])
 
-  function addUnopenedFood(item) {
+  function addUnopenedFood(item, expiryDate) {
     fetch("http://localhost:5000/food/unopened", {
       method: 'POST',
       body: JSON.stringify({
         item,
-        expiryDate: Date.now(),
+        expiryDate: expiryDate,
         open: false
       }),
       headers: {'Content-type': 'application/json; charset=UTF-8'},
