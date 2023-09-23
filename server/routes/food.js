@@ -13,6 +13,15 @@ router.get("/unopened", async (req, res) => {
 })
 
 // Get all opened
+router.get("/opened", async (req, res) => {
+  try {
+    const foods = await Food.find({ open: true })
+    res.json(foods)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
 // Add new unopened
 router.post("/unopened", async (req, res) => {
   const food = new Food({
@@ -28,13 +37,27 @@ router.post("/unopened", async (req, res) => {
 })
 
 // Add new opened
+router.post("/opened", async (req, res) => {
+  const food = new Food({
+    item: req.body.item,
+    expiryDate: req.body.expiryDate,
+    open: true,
+    openExpiry: req.body.openExpiry
+  })
+  try {
+    const newFood = await food.save()
+    res.status(201).json(newFood)
+  } catch (err) {
+    res.status(400).json({ message: err.message })
+  }
+})
+
 // Delete one unopened
 router.delete("/unopened/:item", async (req, res) => {
   try {
-    const itemToDelete = await Food.findOne({ item: req.params.item })
-    console.log(itemToDelete)
+    const itemToDelete = await Food.findOne({ item: req.params.item, open: false })
     if (itemToDelete == null) {
-      res.json({ message: `No ${req.params.item} to remove` })
+      res.json({ message: `No unopened ${req.params.item} to remove` })
     } else {
       await Food.deleteOne({ _id: itemToDelete._id })
       res.json({ message: `${req.params.item} removed`, _id: itemToDelete._id })
@@ -45,7 +68,19 @@ router.delete("/unopened/:item", async (req, res) => {
 })
 
 // Delete one opened
-
+router.delete("/opened/:item", async (req, res) => {
+  try {
+    const itemToDelete = await Food.findOne({ item: req.params.item, open: true })
+    if (itemToDelete == null) {
+      res.json({ message: `No open ${req.params.item} to remove` })
+    } else {
+      await Food.deleteOne({ _id: itemToDelete._id })
+      res.json({ message: `${req.params.item} removed`, _id: itemToDelete._id })
+    }
+  } catch (err) {
+    res.status(400).json({ message: err.message })
+  }
+})
 
 
 

@@ -4,7 +4,6 @@ export function NewItemForm({ addItem }) {
 
   const [newItem, setNewItem] = useState('')
   const [expiryDate, setExpiryDate] = useState('')
-  // const dateOptions = {weekday: 'short', day: 'numeric', month: 'short', year: 'numeric'}
 
   function handleSubmit(e) {
     e.preventDefault()
