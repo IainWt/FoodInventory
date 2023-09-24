@@ -69,15 +69,14 @@ export default function App() {
   }
 
   // Add an item to opened list
-  function addOpenedFood(item, expiry) {
-    console.log("addOpened", item, expiry)
+  function addOpenedFood(item, expiryDate, openExpiry) {
     fetch("http://localhost:5000/food/opened", {
       method: 'POST',
       body: JSON.stringify({
         item,
-        expiryDate: expiry,
+        expiryDate: expiryDate,
         open: true,
-        openExpiry: expiry
+        openExpiry: openExpiry
       }),
       headers: {'Content-type': 'application/json; charset=UTF-8'},
     })

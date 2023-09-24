@@ -4,18 +4,41 @@ export function NewItemForm({ open, addItem }) {
 
   const [newItem, setNewItem] = useState('')
   const [expiryDate, setExpiryDate] = useState('')
-  const [useWithin, setUseWithin] = useState('')
+  const [useWithinNum, setUseWithinNum] = useState('')
   const [timeDropdown, setTimeDropdown] = useState('days')
+
+
+  function calculateOpenExpiry() {
+    const currentDate = new Date()
+    const openExpiry = new Date()
+    const dateOptions = {weekday: 'short', day: 'numeric', month: 'short', year: 'numeric'}
+    console.log("before ", new Date(currentDate).toLocaleDateString(undefined, dateOptions))
+
+    if (timeDropdown === 'days') {
+      openExpiry.setDate(currentDate.getDate() + parseInt(useWithinNum))
+    } else if (timeDropdown === 'months') {
+      openExpiry.setMonth(currentDate.getMonth() + parseInt(useWithinNum))
+    } else {
+      console.error("Only days and months should be available!")
+    }
+
+    return openExpiry
+  }
 
   function handleSubmit(e) {
     e.preventDefault()
     if (newItem === '') return
 
-    addItem(newItem, expiryDate, useWithin)
+    if (open) {
+      const openExpiry = calculateOpenExpiry()
+      addItem(newItem, expiryDate, openExpiry)
+    } else {
+      addItem(newItem, expiryDate)
+    }
 
     setNewItem("")
     setExpiryDate("")
-    setUseWithin("")
+    setUseWithinNum("")
   }
 
   return (
@@ -48,8 +71,8 @@ export function NewItemForm({ open, addItem }) {
               <input
                 type="number"
                 id="useWithin"
-                value={useWithin}
-                onChange={e => setUseWithin(e.target.value)}
+                value={useWithinNum}
+                onChange={e => setUseWithinNum(e.target.value)}
                 min="1" />
               
               <select 
