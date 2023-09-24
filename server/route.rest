@@ -7,9 +7,27 @@ POST http://localhost:5000/food/unopened
 Content-Type: application/json
 
 {
-  "item": "pesto"
+  "item": "pesto",
+  "expiryDate": "2023-09-24T00:00:00.000Z"
 }
 
 ###
 
-DELETE http://localhost:5000/food/unopened/pesto
+POST http://localhost:5000/food/opened
+Content-Type: application/json
+
+{
+  "item": "pesto",
+  "expiryDate": "2023-09-24T00:00:00.000Z",
+  "open": true,
+  "openExpiry": "2023-09-24T00:00:00.000Z"
+}
+
+###
+
+DELETE http://localhost:5000/food/unopened
+Content-Type: application/json
+
+{
+  "_id": "650f0512c0db9e56a757e74a"
+}

@@ -69,14 +69,15 @@ export default function App() {
   }
 
   // Add an item to opened list
-  function addOpenedFood(item, expiryDate) {
+  function addOpenedFood(item, expiry) {
+    console.log("addOpened", item, expiry)
     fetch("http://localhost:5000/food/opened", {
       method: 'POST',
       body: JSON.stringify({
         item,
-        expiryDate: expiryDate,
+        expiryDate: expiry,
         open: true,
-        openExpiry: expiryDate
+        openExpiry: expiry
       }),
       headers: {'Content-type': 'application/json; charset=UTF-8'},
     })
@@ -85,28 +86,31 @@ export default function App() {
   }
 
   // Remove an item from unopened list
-  function removeUnopenedFood(item) {
-    fetch(`http://localhost:5000/food/unopened/${item}`, {
+  function removeUnopenedFood(_id) {
+    console.log("id : ", _id)
+    fetch(`http://localhost:5000/food/unopened/${_id}`, {
       method: 'DELETE',
     })
       .then(response => response.json())
       .then(response => {
         setUnopened(currentUnopened => {
-          return currentUnopened.filter(item => item._id != response._id)
+          return currentUnopened.filter(item => item._id != _id)
         })
+        console.log(response)
+        addOpenedFood(response.item, response.expiryDate)
       })
       .catch(err => console.log(err))
   }
 
   // Remove an item from opened list
-  function removeOpenedFood(item) {
-    fetch(`http://localhost:5000/food/opened/${item}`, {
+  function removeOpenedFood(_id) {
+    fetch(`http://localhost:5000/food/opened/${_id}`, {
       method: 'DELETE',
     })
       .then(response => response.json())
       .then(response => {
         setOpened(currentOpened => {
-          return currentOpened.filter(item => item._id != response._id)
+          return currentOpened.filter(item => item._id != _id)
         })
       })
       .catch(err => console.log(err))
@@ -128,8 +132,13 @@ export default function App() {
 
   return (
     <>
-      <FormAndList addItem={addOpenedFood} items={opened} removeFood={removeOpenedFood} />
-      <FormAndList addItem={addUnopenedFood} items={unopened} removeFood={removeUnopenedFood} />
+      <h1>Food Inventory</h1>
+      <FormAndList open={true} addItem={addOpenedFood} items={opened} removeFood={removeOpenedFood} />
+      <FormAndList open={false} addItem={addUnopenedFood} items={unopened} removeFood={removeUnopenedFood} />
     </>
   )
 }
+
+
+// TODO:
+// open food closest expiry date calculation

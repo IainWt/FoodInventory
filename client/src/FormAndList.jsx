@@ -2,12 +2,12 @@ import React from 'react'
 import { NewItemForm } from "./NewItemForm"
 import { FoodList } from "./FoodList"
 
-export function FormAndList({ addItem, items, removeFood }) {
+export function FormAndList({ open, addItem, items, removeFood }) {
   return (
     <>
-      <NewItemForm addItem={addItem} />
-      <h1 className="header">Food List</h1>
-      <FoodList items={items} removeFood={removeFood} />
+      <h1 className="header">{open ? "Opened" : "Unopened"} Food</h1>
+      <NewItemForm open={open} addItem={addItem} />
+      <FoodList open={open} items={items} removeFood={removeFood} />
     </>
   )
 }

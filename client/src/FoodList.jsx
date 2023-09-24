@@ -1,6 +1,6 @@
 import { ListItem } from "./ListItem"
 
-export function FoodList({ items, removeFood }) {
+export function FoodList({open, items, removeFood }) {
   return (
     <table className="food-table">
       {items.length === 0 && "No Items"}
@@ -14,7 +14,7 @@ export function FoodList({ items, removeFood }) {
       <tbody>
       {items.map(item => {
         return (
-          <ListItem {...item} key={item._id} removeFood={removeFood} />
+          <ListItem {...item} key={item._id} open={open} removeFood={removeFood} />
           )
         })}
       </tbody>
