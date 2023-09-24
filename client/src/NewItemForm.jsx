@@ -12,7 +12,6 @@ export function NewItemForm({ open, addItem }) {
     const currentDate = new Date()
     const openExpiry = new Date()
     const dateOptions = {weekday: 'short', day: 'numeric', month: 'short', year: 'numeric'}
-    console.log("before ", new Date(currentDate).toLocaleDateString(undefined, dateOptions))
 
     if (timeDropdown === 'days') {
       openExpiry.setDate(currentDate.getDate() + parseInt(useWithinNum))

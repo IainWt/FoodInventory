@@ -141,3 +141,4 @@ export default function App() {
 
 // TODO:
 // open food closest expiry date calculation
+// unopened -> opened - add openExpiry

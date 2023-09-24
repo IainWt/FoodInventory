@@ -1,5 +1,7 @@
-export function ListItem({ _id, item, expiryDate, open, removeFood }) {
+export function ListItem({ _id, item, expiryDate, openExpiry, open, removeFood }) {
   const dateOptions = {weekday: 'short', day: 'numeric', month: 'short', year: 'numeric'}
+  // Show the closest expiry date
+  if (open && openExpiry < expiryDate) expiryDate = openExpiry
   return (
     <tr>
       <td>
