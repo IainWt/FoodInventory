@@ -11,7 +11,6 @@ export function NewItemForm({ open, addItem }) {
   function calculateOpenExpiry() {
     const currentDate = new Date()
     const openExpiry = new Date()
-    const dateOptions = {weekday: 'short', day: 'numeric', month: 'short', year: 'numeric'}
 
     if (timeDropdown === 'days') {
       openExpiry.setDate(currentDate.getDate() + parseInt(useWithinNum))

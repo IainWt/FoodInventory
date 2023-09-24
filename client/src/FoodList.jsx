@@ -19,14 +19,6 @@ export function FoodList({open, items, removeFood }) {
         })}
       </tbody>
     </table>
-    // <ul className="list">
-    //   {items.length === 0 && "No Items"}
-    //   {items.map(item => {
-    //     return (
-    //       <ListItem {...item} key={item._id} removeFood={removeFood} />
-    //     )
-    //   })}
-    // </ul>
   )
   
 }
