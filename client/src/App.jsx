@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import "./styles.css"
 import { FormAndList } from "./FormAndList"
 import OpenExpiryForm from "./OpenExpiryForm"
+import { Transcriber } from "./Transcriber"
 
 export default function App() {
   // const [todos, setTodos] = useState(() => {
@@ -121,9 +122,11 @@ export default function App() {
     return <div>Loading...</div>;
   }
 
+
   return (
     <>
       <h1>Food Inventory</h1>
+      <Transcriber addUnopenedFood={addUnopenedFood} />
       <FormAndList open={true} addItem={addOpenedFood} items={opened} removeFood={removeOpenedFood} />
       {openingResponse !== '' ? 
         <OpenExpiryForm addItem={addOpenedFood} openingResponse={openingResponse} hideForm={hideOpenExpiryForm} /> 
