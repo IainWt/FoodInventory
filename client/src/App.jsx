@@ -112,6 +112,21 @@ export default function App() {
       .catch(err => console.log(err))
   }
 
+  function calculateOpenExpiry(useWithinNum, timePeriod) {
+    const currentDate = new Date()
+    const openExpiry = new Date()
+
+    if (timePeriod === 'days') {
+      openExpiry.setDate(currentDate.getDate() + parseInt(useWithinNum))
+    } else if (timePeriod === 'months') {
+      openExpiry.setMonth(currentDate.getMonth() + parseInt(useWithinNum))
+    } else {
+      console.error("Only days and months should be available!")
+    }
+
+    return openExpiry
+  }
+
 
   function hideOpenExpiryForm() {
     setOpeningResponse('')
@@ -126,10 +141,10 @@ export default function App() {
   return (
     <>
       <h1>Food Inventory</h1>
-      <Transcriber addUnopenedFood={addUnopenedFood} />
+      <Transcriber addUnopenedFood={addUnopenedFood} removeUnopenedFood={removeUnopenedFood} addOpenedFood={addOpenedFood} calculateOpenExpiry={calculateOpenExpiry} />
       <FormAndList open={true} addItem={addOpenedFood} items={opened} removeFood={removeOpenedFood} />
       {openingResponse !== '' ? 
-        <OpenExpiryForm addItem={addOpenedFood} openingResponse={openingResponse} hideForm={hideOpenExpiryForm} /> 
+        <OpenExpiryForm addItem={addOpenedFood} openingResponse={openingResponse} hideForm={hideOpenExpiryForm} calculateOpenExpiry={calculateOpenExpiry} /> 
       : null}
       <FormAndList open={false} addItem={addUnopenedFood} items={unopened} removeFood={removeUnopenedFood} />
     </>
