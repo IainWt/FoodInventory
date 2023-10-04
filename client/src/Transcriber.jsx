@@ -2,7 +2,48 @@ import React, { useEffect, useRef, useState } from 'react'
 
 
 
-export function Transcriber({ addUnopenedFood, removeUnopenedFood, addOpenedFood, calculateOpenExpiry }) {
+export function Transcriber({ addUnopenedFood, removeUnopenedFood, addOpenedFood, calculateOpenExpiry, openFoodByName }) {
+
+  const numbers = {
+    'zero': 0,
+    'one': 1,
+    'two': 2,
+    'three': 3,
+    'four': 4,
+    'five': 5,
+    'six': 6,
+    'seven': 7,
+    'eight': 8,
+    'nine': 9,
+    'ten': 10,
+    'eleven': 11,
+    'twelve': 12,
+    'thirteen': 13,
+    'fourteen': 14,
+    'fifteen': 15,
+    'sixteen': 16,
+    'seventeen': 17,
+    'eighteen': 18,
+    'nineteen': 19,
+    'twenty': 20,
+    'thirty': 30,
+    'forty': 40,
+    'fifty': 50,
+    'sixty': 60,
+    'seventy': 70,
+    'eighty': 80,
+    'ninety': 90
+  }
+
+  function stringToNum(word) {
+    let num = parseInt(word)
+    if (!isNaN(num)) {
+      return num
+    }
+    num = numbers[word]
+    if (num != null) return num
+    console.error(`Could not parse ${word} as a number`)
+  }
 
   // --- Speech recognition ---
 
@@ -67,7 +108,6 @@ export function Transcriber({ addUnopenedFood, removeUnopenedFood, addOpenedFood
   function startSpeechRecognition() {
     recognition.start()
     setStopping(false)
-    console.log("stopping:", stopping)
   }
 
   function stopSpeechRecognition() {
@@ -120,18 +160,20 @@ export function Transcriber({ addUnopenedFood, removeUnopenedFood, addOpenedFood
       const dateWords = words.slice(expiresIndex + 1)
       const date = parseDate(dateWords)
       console.log(`Adding unopened ${itemToAdd} with expiry date of ${date}`)
-      removeUnopenedFood(itemToAdd, date) // ### NEED TO FIND ID ###
+      addUnopenedFood(itemToAdd, date)
     }
   }
 
+  // test: open tomato use within three days
   function parseOpenCommand(words) {
-    const useIndex = words.indexOf('use')
-    if (expiresIndex !== -1 && words[useIndex + 1] === 'within') {
+    const useRegex = /use|used/
+    const useIndex = words.findIndex(element => useRegex.test(element))
+    if (useIndex !== -1 && words[useIndex + 1] === 'within') {
       const itemToOpen = words.slice(1, useIndex).join(' ')
       const periodWords = words.slice(useIndex + 2)
       const openExpiry = parsePeriod(periodWords)
       console.log(`Opening ${itemToOpen} to be used before ${openExpiry}`)
-      addUnopenedFood(itemToAdd, date)
+      openFoodByName(itemToOpen, openExpiry)
     }
   }
 
@@ -158,9 +200,10 @@ export function Transcriber({ addUnopenedFood, removeUnopenedFood, addOpenedFood
   }
 
   function parsePeriod(periodWords) {
-    const number = parseInt(periodWords[0])
-    const length = periodWords[1]
-    const lengthOptions = ['day', 'days', 'month', 'months']
+    const number = stringToNum(periodWords[0])
+    let length = periodWords[1]
+    if (length[length.length - 1] !== 's') length += 's'
+    const lengthOptions = ['days', 'months']
     if (!lengthOptions.includes(length)) {
       console.error("You must give a number of days or months, not", length)
     }
