@@ -90,13 +90,13 @@ export default function App() {
   // ### REMOVING ITEMS ###
 
   // Remove an item from unopened list
-  function removeUnopenedFood(_id) {
+  function removeUnopenedFood(_id, addToOpened=true) {
     fetch(`http://localhost:5000/food/unopened/${_id}`, {
       method: 'DELETE',
     })
       .then(response => response.json())
       .then(response => {
-        setOpeningResponse(response)
+        if (addToOpened) setOpeningResponse(response)
         setUnopened(currentUnopened => {
           return currentUnopened.filter(item => item._id != _id)
         })
@@ -125,6 +125,24 @@ export default function App() {
       addOpenedFood(item.item, item.expiryDate, openExpiry)
     } else {
       addOpenedFood(name, openExpiry, openExpiry)
+    }
+  }
+
+  function finishFoodByName(name) {
+    const item = opened.find(element => element.item === name)
+    if (typeof item !== 'undefined') {
+      removeOpenedFood(item._id)
+    } else {
+      console.log("There are no opened items with the name", name)
+    }
+  }
+
+  function removeFoodByName(name) {
+    const item = unopened.find(element => element.item === name)
+    if (typeof item !== 'undefined') {
+      removeUnopenedFood(item._id, false)
+    } else {
+      console.log("There are no unopened items with the name", name)
     }
   }
 
@@ -175,7 +193,7 @@ export default function App() {
   return (
     <>
       <h1>Food Inventory</h1>
-      <Transcriber addUnopenedFood={addUnopenedFood} removeUnopenedFood={removeUnopenedFood} addOpenedFood={addOpenedFood} calculateOpenExpiry={calculateOpenExpiry} openFoodByName={openFoodByName} />
+      <Transcriber addUnopenedFood={addUnopenedFood} removeUnopenedFood={removeUnopenedFood} addOpenedFood={addOpenedFood} calculateOpenExpiry={calculateOpenExpiry} openFoodByName={openFoodByName} finishFoodByName={finishFoodByName} removeFoodByName={removeFoodByName} />
       <FormAndList open={true} addItem={addOpenedFood} items={opened} removeFood={removeOpenedFood} />
       {openingResponse !== '' ? 
         <OpenExpiryForm addItem={addOpenedFood} openingResponse={openingResponse} hideForm={hideOpenExpiryForm} calculateOpenExpiry={calculateOpenExpiry} /> 

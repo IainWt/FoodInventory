@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 
 
 
-export function Transcriber({ addUnopenedFood, removeUnopenedFood, addOpenedFood, calculateOpenExpiry, openFoodByName }) {
+export function Transcriber({ addUnopenedFood, removeUnopenedFood, addOpenedFood, calculateOpenExpiry, openFoodByName, finishFoodByName, removeFoodByName }) {
 
   const numbers = {
     'zero': 0,
@@ -150,6 +150,12 @@ export function Transcriber({ addUnopenedFood, removeUnopenedFood, addOpenedFood
     else if (words[0] == 'open') {
       parseOpenCommand(words)
     }
+    else if (words[0] == 'finish') {
+      parseFinishCommand(words)
+    }
+    else if (words[0] == 'remove') {
+      parseRemoveCommand(words)
+    }
   }
 
   // 
@@ -175,6 +181,18 @@ export function Transcriber({ addUnopenedFood, removeUnopenedFood, addOpenedFood
       console.log(`Opening ${itemToOpen} to be used before ${openExpiry}`)
       openFoodByName(itemToOpen, openExpiry)
     }
+  }
+
+  function parseFinishCommand(words) {
+    const itemToFinish = words.slice(1).join(' ')
+    console.log(`Finishing opened ${itemToFinish}`)
+    finishFoodByName(itemToFinish)
+  }
+
+  function parseRemoveCommand(words) {
+    const itemToFinish = words.slice(1).join(' ')
+    console.log(`Removing unopened ${itemToFinish}`)
+    removeFoodByName(itemToFinish)
   }
 
   // test: I want to add something expires 26 slash 9 slash 23 delete
