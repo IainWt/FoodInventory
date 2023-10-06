@@ -1,30 +1,30 @@
 import React, { useState } from 'react'
 
-export default function OpenExpiryForm({ addItem, openingResponse, hideForm }) {
+export default function OpenExpiryForm({ addItem, openingResponse, hideForm, calculateOpenExpiry }) {
 
   const [useWithinNum, setUseWithinNum] = useState('')
   const [timeDropdown, setTimeDropdown] = useState('days')
 
 
-  function calculateOpenExpiry() {
-    const currentDate = new Date()
-    const openExpiry = new Date()
+  // function calculateOpenExpiry() {
+  //   const currentDate = new Date()
+  //   const openExpiry = new Date()
 
-    if (timeDropdown === 'days') {
-      openExpiry.setDate(currentDate.getDate() + parseInt(useWithinNum))
-    } else if (timeDropdown === 'months') {
-      openExpiry.setMonth(currentDate.getMonth() + parseInt(useWithinNum))
-    } else {
-      console.error("Only days and months should be available!")
-    }
+  //   if (timeDropdown === 'days') {
+  //     openExpiry.setDate(currentDate.getDate() + parseInt(useWithinNum))
+  //   } else if (timeDropdown === 'months') {
+  //     openExpiry.setMonth(currentDate.getMonth() + parseInt(useWithinNum))
+  //   } else {
+  //     console.error("Only days and months should be available!")
+  //   }
 
-    return openExpiry
-  }
+  //   return openExpiry
+  // }
 
   function handleSubmit(e) {
     e.preventDefault()
 
-    const openExpiry = calculateOpenExpiry()
+    const openExpiry = calculateOpenExpiry(useWithinNum, timeDropdown)
     addItem(openingResponse.item, openingResponse.expiryDate, openExpiry)
     hideForm()
 

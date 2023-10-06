@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import "./styles.css"
 import { FormAndList } from "./FormAndList"
 import OpenExpiryForm from "./OpenExpiryForm"
+import { Transcriber } from "./Transcriber"
 
 export default function App() {
   // const [todos, setTodos] = useState(() => {
@@ -17,13 +18,15 @@ export default function App() {
   const [openLoading, setOpenLoading] = useState(true)
   const [openingResponse, setOpeningResponse] = useState('')
 
+  // ### GETTING ALL ITEMS ###
+
   useEffect(() => {
     fetch("http://localhost:5000/food/unopened").then(
       response => response.json()
     )
     .then(
       data => {
-        setUnopened(data)
+        setUnopened(data.sort(sortByDate))
         setUnopenLoading(false)
       }
     )
@@ -39,7 +42,7 @@ export default function App() {
     )
     .then(
       data => {
-        setOpened(data)
+        setOpened(data.sort(sortByOpenDate))
         setOpenLoading(false)
       }
     )
@@ -50,6 +53,8 @@ export default function App() {
       }
     )
   }, [])
+
+  // ### ADDING ITEMS ###
 
   // Add an item to unopened list
   function addUnopenedFood(item, expiryDate) {
@@ -63,7 +68,7 @@ export default function App() {
       headers: {'Content-type': 'application/json; charset=UTF-8'},
     })
     .then(response => response.json())
-    .then(data => setUnopened(currentUnopened => [...currentUnopened, data]))
+    .then(data => setUnopened(currentUnopened => [...currentUnopened, data].sort(sortByDate)))
   }
 
   // Add an item to opened list
@@ -79,17 +84,19 @@ export default function App() {
       headers: {'Content-type': 'application/json; charset=UTF-8'},
     })
     .then(response => response.json())
-    .then(data => setOpened(currentOpened => [...currentOpened, data]))
+    .then(data => setOpened(currentOpened => [...currentOpened, data].sort(sortByOpenDate)))
   }
 
+  // ### REMOVING ITEMS ###
+
   // Remove an item from unopened list
-  function removeUnopenedFood(_id) {
+  function removeUnopenedFood(_id, addToOpened=true) {
     fetch(`http://localhost:5000/food/unopened/${_id}`, {
       method: 'DELETE',
     })
       .then(response => response.json())
       .then(response => {
-        setOpeningResponse(response)
+        if (addToOpened) setOpeningResponse(response)
         setUnopened(currentUnopened => {
           return currentUnopened.filter(item => item._id != _id)
         })
@@ -111,6 +118,67 @@ export default function App() {
       .catch(err => console.log(err))
   }
 
+  function openFoodByName(name, openExpiry) {
+    const item = unopened.find(element => element.item === name)
+    if (typeof item !== 'undefined') {
+      removeUnopenedFood(item._id)
+      addOpenedFood(item.item, item.expiryDate, openExpiry)
+    } else {
+      addOpenedFood(name, openExpiry, openExpiry)
+    }
+  }
+
+  function finishFoodByName(name) {
+    const item = opened.find(element => element.item === name)
+    if (typeof item !== 'undefined') {
+      removeOpenedFood(item._id)
+    } else {
+      console.log("There are no opened items with the name", name)
+    }
+  }
+
+  function removeFoodByName(name) {
+    const item = unopened.find(element => element.item === name)
+    if (typeof item !== 'undefined') {
+      removeUnopenedFood(item._id, false)
+    } else {
+      console.log("There are no unopened items with the name", name)
+    }
+  }
+
+  // ### SORTING ITEMS ###
+
+  function sortByDate(item1, item2) {
+    return new Date(item1.expiryDate).getTime() - new Date(item2.expiryDate).getTime()
+  }
+
+  function sortByOpenDate(item1, item2) {
+    // Only use expiryDate if openExpiry is null
+    const openExpiry1 = item1.openExpiry ? new Date(item1.openExpiry).getTime() : new Date(item1.expiryDate).getTime()
+    const openExpiry2 = item2.openExpiry ? new Date(item2.openExpiry).getTime() : new Date(item2.expiryDate).getTime()
+    // Get the closest expiry date
+    const date1 = Math.min(openExpiry1, new Date(item1.expiryDate).getTime())
+    const date2 = Math.min(openExpiry2, new Date(item2.expiryDate).getTime())
+    return date1 - date2
+  }
+
+  function calculateOpenExpiry(useWithinNum, timePeriod) {
+    const currentDate = new Date()
+    const openExpiry = new Date()
+
+    if (timePeriod === 'days') {
+      openExpiry.setDate(currentDate.getDate() + parseInt(useWithinNum))
+    } else if (timePeriod === 'months') {
+      openExpiry.setMonth(currentDate.getMonth() + parseInt(useWithinNum))
+    } else {
+      console.error("Only days and months should be available!")
+    }
+
+    return openExpiry
+  }
+
+
+  // ### DISPLAY ###
 
   function hideOpenExpiryForm() {
     setOpeningResponse('')
@@ -121,12 +189,14 @@ export default function App() {
     return <div>Loading...</div>;
   }
 
+
   return (
     <>
       <h1>Food Inventory</h1>
+      <Transcriber addUnopenedFood={addUnopenedFood} removeUnopenedFood={removeUnopenedFood} addOpenedFood={addOpenedFood} calculateOpenExpiry={calculateOpenExpiry} openFoodByName={openFoodByName} finishFoodByName={finishFoodByName} removeFoodByName={removeFoodByName} />
       <FormAndList open={true} addItem={addOpenedFood} items={opened} removeFood={removeOpenedFood} />
       {openingResponse !== '' ? 
-        <OpenExpiryForm addItem={addOpenedFood} openingResponse={openingResponse} hideForm={hideOpenExpiryForm} /> 
+        <OpenExpiryForm addItem={addOpenedFood} openingResponse={openingResponse} hideForm={hideOpenExpiryForm} calculateOpenExpiry={calculateOpenExpiry} /> 
       : null}
       <FormAndList open={false} addItem={addUnopenedFood} items={unopened} removeFood={removeUnopenedFood} />
     </>
