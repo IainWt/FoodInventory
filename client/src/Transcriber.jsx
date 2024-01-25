@@ -161,6 +161,10 @@ export function Transcriber({ addUnopenedFood, removeUnopenedFood, addOpenedFood
   // ################## PARSING ################
 
   function parseTranscript(transcript) {
+    if (transcript.split(' ').length > 10 && recognitionSuccess.length < 1) {
+      setRecognitionError('Cannot understand any commands from speech: ' + transcript)
+      return
+    }
     const commands = transcript.split(new RegExp(delimiterPattern))
     commands.forEach(command => {
         parseCommand(command)
