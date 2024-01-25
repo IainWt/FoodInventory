@@ -5,7 +5,7 @@ export function ListItem({ _id, item, expiryDate, openExpiry, open, removeFood }
   return (
     <tr>
       <td>
-        <button onClick={() => removeFood(_id)} className="btn btn-danger">{open ? "Finished" : "Open"}</button>
+        <button onClick={() => removeFood(_id)} className="btn btn-li">{open ? "Finished" : "Open"}</button>
       </td>
       <td>{item}</td>
       <td>{new Date(expiryDate).toLocaleDateString(undefined, dateOptions)}</td>
