@@ -38,17 +38,25 @@ export function Transcriber({ addUnopenedFood, removeUnopenedFood, addOpenedFood
   function stringToNum(word) {
     let num = parseInt(word)
     if (!isNaN(num)) {
+      console.log('returning !isNaN ', num)
       return num
     }
     num = numbers[word]
+    console.log('translated to number ', num)
     if (num != null) return num
     console.error(`Could not parse ${word} as a number`)
   }
+
+  const DATE_OPTIONS = {weekday: 'short', day: 'numeric', month: 'short', year: 'numeric'}
+
 
   // --- Speech recognition ---
 
   const [stopping, setStopping] = useState(false)
   const [resultsCount, setResultsCount] = useState(0)
+  const [isRecording, setIsRecording] = useState(false)
+  const [recognitionSuccess, setRecognitionSuccess] = useState('')
+  const [recognitionError, setRecognitionError] = useState('')
   const previousValues = useRef({ stopping, resultsCount })
 
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
@@ -65,10 +73,12 @@ export function Transcriber({ addUnopenedFood, removeUnopenedFood, addOpenedFood
   // When speech recognition starts listening
   recognition.onstart = function() {
     console.log("Listening...")
+    setIsRecording(true)
   }
 
   recognition.onend = function() {
     console.log("Recognition ended")
+    setIsRecording(false)
   }
 
   // When speech stops
@@ -117,6 +127,23 @@ export function Transcriber({ addUnopenedFood, removeUnopenedFood, addOpenedFood
     setStopping(true)
   }
 
+  function toggleRecording() {
+    let button = document.querySelector('.btn-speak')
+    if (isRecording) {
+      button.style.backgroundColor = 'hsl(200, 100%, 50%, 0.1)'
+      button.style.color = 'hsl(200, 100%, 50%)'
+      button.style.border = '1px solid hsl(200, 100%, 50%)'
+      setIsRecording(false)
+      stopSpeechRecognition()
+    } else {
+      button.style.backgroundColor = 'red'
+      button.style.color = 'white'
+      button.style.border = '1px solid red'
+      setIsRecording(true)
+      startSpeechRecognition()
+    }
+  }
+
   // useEffect(() => {
 
   //   if (
@@ -134,6 +161,10 @@ export function Transcriber({ addUnopenedFood, removeUnopenedFood, addOpenedFood
   // ################## PARSING ################
 
   function parseTranscript(transcript) {
+    if (transcript.split(' ').length > 10 && recognitionSuccess.length < 1) {
+      setRecognitionError('Cannot understand any commands from speech: ' + transcript)
+      return
+    }
     const commands = transcript.split(new RegExp(delimiterPattern))
     commands.forEach(command => {
         parseCommand(command)
@@ -165,8 +196,15 @@ export function Transcriber({ addUnopenedFood, removeUnopenedFood, addOpenedFood
       const itemToAdd = words.slice(1, expiresIndex).join(' ')
       const dateWords = words.slice(expiresIndex + 1)
       const date = parseDate(dateWords)
-      console.log(`Adding unopened ${itemToAdd} with expiry date of ${date}`)
-      addUnopenedFood(itemToAdd, date)
+
+      if (!date) {
+        setRecognitionError(`Could not parse ${dateWords.join(' ')} as a date`)
+      } else {
+        console.log(`Adding unopened ${itemToAdd} with expiry date of ${date}`)
+        const displayDate = new Date(date).toLocaleDateString(undefined, DATE_OPTIONS)
+        setRecognitionSuccess(`Adding unopened ${itemToAdd} with expiry date of ${displayDate}`)
+        addUnopenedFood(itemToAdd, date)
+      }
     }
   }
 
@@ -179,6 +217,7 @@ export function Transcriber({ addUnopenedFood, removeUnopenedFood, addOpenedFood
       const periodWords = words.slice(useIndex + 2)
       const openExpiry = parsePeriod(periodWords)
       console.log(`Opening ${itemToOpen} to be used before ${openExpiry}`)
+      setRecognitionSuccess(`Opening ${itemToOpen} to be used before ${new Date(openExpiry).toLocaleDateString(undefined, DATE_OPTIONS)}`)
       openFoodByName(itemToOpen, openExpiry)
     }
   }
@@ -186,13 +225,15 @@ export function Transcriber({ addUnopenedFood, removeUnopenedFood, addOpenedFood
   function parseFinishCommand(words) {
     const itemToFinish = words.slice(1).join(' ')
     console.log(`Finishing opened ${itemToFinish}`)
+    setRecognitionSuccess(`Finishing opened ${itemToFinish}`)
     finishFoodByName(itemToFinish)
   }
 
   function parseRemoveCommand(words) {
-    const itemToFinish = words.slice(1).join(' ')
-    console.log(`Removing unopened ${itemToFinish}`)
-    removeFoodByName(itemToFinish)
+    const itemToRemove = words.slice(1).join(' ')
+    console.log(`Removing unopened ${itemToRemove}`)
+    setRecognitionSuccess(`Removing unopened ${itemToRemove}`)
+    removeFoodByName(itemToRemove)
   }
 
   // test: I want to add something expires 26 slash 9 slash 23 delete
@@ -209,9 +250,10 @@ export function Transcriber({ addUnopenedFood, removeUnopenedFood, addOpenedFood
     if (yearString.length < 3) {
       yearString = "20" + yearString
     }
-    const year = parseInt(yearString)
-    const month = parseInt(dateWords[1]) - 1
-    const day = parseInt(dateWords[0])
+    const year = stringToNum(yearString)
+    const month = stringToNum(dateWords[1]) - 1
+    const day = stringToNum(dateWords[0])
+    if (year == null || month == null || day == null) return
     console.log(year, month, day)
     console.log(new Date(year, month, day))
     return new Date(year, month, day)
@@ -230,8 +272,26 @@ export function Transcriber({ addUnopenedFood, removeUnopenedFood, addOpenedFood
 
   return (
     <>
-      <button onClick={startSpeechRecognition} >Speak</button>
-      <button onClick={stopSpeechRecognition} >Stop</button>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,700,1,0" />
+      <button onClick={toggleRecording} className='btn btn-speak' ><span id='mic' className="material-symbols-outlined">mic</span></button>
+      {(recognitionSuccess && recognitionSuccess.length > 0) && (
+        <div className='message success'>
+          <p>{recognitionSuccess}</p>
+        </div>
+      )}
+      {(recognitionError && recognitionError.length > 0) && (
+        <div className='message error'>
+          <p>{recognitionError}</p>
+        </div>
+      )}
+      <h3>Try these commands:</h3>
+      <ul>
+        <li>add pesto expires 20 slash 5 slash 24</li>
+        <li>open pesto use within 4 days</li>
+        <li>finish pesto (when in opened list)</li>
+        <li>remove pesto (when in unopened list)</li>
+      </ul>
+      <p>You may need to refresh the page to stop the recording (I will fix this soon).</p>
     </>
   )
 }
